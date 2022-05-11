@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'savage_food_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DATABASE'),
         'USER': env('USER'),
         'DATABASE_PORT': env('PORT'),
@@ -110,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'api.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
