@@ -21,6 +21,7 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.save(using=self._db)
         return user
+    
 class User(AbstractBaseUser, PermissionsMixin):
     class User_group(models.IntegerChoices):
         ADMIN = 0       # Encargado del area
@@ -40,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     active_order = models.JSONField(
         "Pedido actual", encoder=None, decoder=None, blank=True)
     order_story = models.JSONField(
-        "Historial de pedidos", encoder=None, decoder=None, blank=True)
+        "Historial de pedidos", encoder=None, decoder=None, blank=True, )
 
     def save(self, **kwargs):
         some_salt = 'mMUj0DrIK6vgtdIYepkIxN'
