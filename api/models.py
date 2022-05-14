@@ -27,8 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ADMIN = 0       # Encargado del area
         CHECKER = 1     # Encargado de la caja
         DELIVERY = 2    # Encargado de llevar el servicio a domicilio
-        ATTENDANT = 3   # Encargado del publico en el lugar
-        CUSTOMER = 4    # Comensal
+        CUSTOMER = 3    # Comensal
 
     id = models.SmallAutoField(primary_key=True)
     username = models.CharField('Username', max_length=20, unique=True)
@@ -36,12 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField('Name', max_length=30)
     last_name = models.CharField('Name', max_length=30)
     email = models.EmailField('Email', max_length=100)
-    address = models.CharField('Dirección', max_length=250, default="")
     user_group = models.IntegerField("Grupo", choices=User_group.choices)
-    active_order = models.JSONField(
-        "Pedido actual", encoder=None, decoder=None, blank=True)
-    order_story = models.JSONField(
-        "Historial de pedidos", encoder=None, decoder=None, blank=True, )
 
     def save(self, **kwargs):
         some_salt = 'mMUj0DrIK6vgtdIYepkIxN'
@@ -50,6 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
     USERNAME_FIELD = 'username'
+    
+        
 class Products(models.Model):
     class Rating(models.IntegerChoices):  # Una especie de Yum Score
         TERRIBLE = 1
@@ -72,7 +68,7 @@ class Orders(models.Model):
     product_list = models.JSONField(
         "Lista de productos", encoder=None, decoder=None)
     total_value = models.IntegerField("Valor total", default=0)
-    user = models.CharField("Usuario adscrito", max_length=50)
+    user_id = models.CharField("Usuario adscrito", max_length=50)
     created = models.DateField("Fecha de creación", auto_now_add=True)
     modified = models.DateTimeField("fecha de modificación", auto_now=True)
     is_active = models.BooleanField("Pedido activo", default=True)
