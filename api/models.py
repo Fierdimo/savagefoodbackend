@@ -27,9 +27,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         ADMIN = 0       # Encargado del area
         CHECKER = 1     # Encargado de la caja
         DELIVERY = 2    # Encargado de llevar el servicio a domicilio
-        CUSTOMER = 3    # Comensal
+        CUSTOMER = 3    # Cliente del restaurante
 
-    id = models.SmallAutoField(primary_key=True)
+    id = models.UUIDField("ID del producto", primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField('Username', max_length=20, unique=True)
     password = models.CharField('Password', max_length=30)
     name = models.CharField('Name', max_length=30)
@@ -43,9 +43,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         super().save(**kwargs)
 
     objects = UserManager()
-    USERNAME_FIELD = 'username'
-    
-        
+    USERNAME_FIELD = 'username'     
+       
 class Products(models.Model):
     class Rating(models.IntegerChoices):  # Una especie de Yum Score
         TERRIBLE = 1
@@ -54,7 +53,7 @@ class Products(models.Model):
         YUM = 4
         EXCELENT = 5
 
-    id = models.SmallAutoField(primary_key=True)
+    id = models.UUIDField("ID del producto", primary_key=True, default=uuid.uuid4, editable=False)
     product_name = models.CharField(
         help_text='Nombre del producto', max_length=50, default='')
     description = models.CharField(
@@ -63,14 +62,24 @@ class Products(models.Model):
     image_url = models.SlugField("Dirección de imagen", max_length=250)
     rating = models.IntegerField(
         "Calificación", choices=Rating.choices)    
+    
 class Orders(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product_list = models.JSONField(
         "Lista de productos", encoder=None, decoder=None)
     total_value = models.IntegerField("Valor total", default=0)
-    user_id = models.CharField("Usuario adscrito", max_length=50)
+    user_id = models.UUIDField("Usuario adscrito")
     created = models.DateField("Fecha de creación", auto_now_add=True)
     modified = models.DateTimeField("fecha de modificación", auto_now=True)
     is_active = models.BooleanField("Pedido activo", default=True)
     on_delivery = models.BooleanField("Pedido en camino", default=False)
-    paid = models.BooleanField("Pedido pago", default=False)
+    is_paid = models.BooleanField("Pedido pago", default=False)
+
+class Order_detail (models.Model):
+    id = models.UUIDField( primary_key=True, default=uuid.uuid4, editable=False)
+    order_id = models.UUIDField("Id de factura")
+    product_id = models.UUIDField("Id de producto")
+    price = models.IntegerField("Valor")
+    quantity = models.IntegerField("Cantidad")
+    created = models.DateField("Fecha de creación", auto_now_add=True)
+    modified = models.DateTimeField("fecha de modificación", auto_now=True)
