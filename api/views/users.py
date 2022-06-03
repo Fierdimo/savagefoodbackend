@@ -10,7 +10,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 import environ
 
-from ..models.user import User
+from ..user import User
 from ..serializers.UserSerializer import UserSerializer
 
 
