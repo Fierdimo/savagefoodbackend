@@ -8,7 +8,7 @@ from rest_framework.authtoken.models import Token
 from ..models import Orders
 from ..serializers import OrderSerializer
 
-from ..user import User
+from ..models import user
 from ..serializers.UserSerializer import UserSerializer
 
 
