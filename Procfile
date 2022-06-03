@@ -1,1 +1,1 @@
-web: gunicorn authProject.wsgi
+web: gunicorn savage_food_app.wsgi
