@@ -10,13 +10,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 
 import environ
 
-from ..models import user
+from ..models.user import User
 from ..serializers.UserSerializer import UserSerializer
 
 
 class UserView(viewsets.ModelViewSet):
 
-    queryset = user.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -28,7 +28,7 @@ class UserView(viewsets.ModelViewSet):
         # Checker = 2
         # Delivery = 3
         user_id = Token.objects.get(key=request.auth).user_id
-        user_query = user.objects.get(id=user_id)
+        user_query = User.objects.get(id=user_id)
         user_data = UserSerializer(user_query).data
         return user_data
 
@@ -37,7 +37,7 @@ class UserView(viewsets.ModelViewSet):
             return super().list(self, request)
 
         if self.user_data(request)["group"] == 2:
-            user_query = user.objects.filter(group=3)
+            user_query = User.objects.filter(group=3)
             delivers = UserSerializer(user_query, many=True).data
             delivers = map(lambda data:
                 {"full_name": data["name"]+" " +
@@ -74,7 +74,7 @@ class LogoutView(APIView):
 
 
 class NewCustomer(viewsets.ModelViewSet):
-    queryset = user.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     
     def list(self, request):
@@ -105,7 +105,7 @@ class NewCustomer(viewsets.ModelViewSet):
     
     def put(self, request):
         # print(request.data['username'])
-        query = user.objects.filter(username=request.data["username_0"])
+        query = User.objects.filter(username=request.data["username_0"])
         if query:
             return Response({"forbidden"})
         
@@ -138,8 +138,8 @@ class CustomAuthToken(ObtainAuthToken):
         serializer = self.serializer_class(data=request.data,
                                            context={'request': request})
         serializer.is_valid(raise_exception=True)
-        User = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=User)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
         return Response({
             'token': token.key,
             'group': user.group,
