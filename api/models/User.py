@@ -1,6 +1,8 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.contrib.auth.hashers import make_password
+
 
 
 class UserManager(BaseUserManager):
@@ -13,26 +15,28 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password):
-        user = self.create_user(
-            username=username,
-            password=password,
-            )
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.BigAutoField(primary_key=True)
-    username = models.CharField('Username', max_length = 15, unique=True)
-    password = models.CharField('Password', max_length = 256)
-    name = models.CharField('Name', max_length = 30)
-    last_name = models.CharField('Lastname', max_length= 40)
-    email = models.EmailField('Email', max_length = 100)
+    class Group(models.IntegerChoices):
+        Customer = 0
+        Admin = 1
+        Checker = 2
+        Delivery = 3
+        
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    username = models.CharField(help_text='Username', max_length = 15, unique=True)
+    password = models.CharField(help_text='Password', max_length = 256)
+    name = models.CharField(help_text='Name', max_length = 30)
+    last_name = models.CharField(help_text='Lastname', max_length= 40)
+    email = models.EmailField(help_text='Email', max_length = 100)
+    group = models.IntegerField(choices=Group.choices, help_text='Tipo de usuario', default=0)
+    option = models.CharField(help_text='Ultima accion', default='', max_length=10)
+
     
     def save(self, **kwargs):
         some_salt = 'mMUj0DrIK6vgtdIYepkIxN'
-        self.password = make_password(self.password, some_salt)
+        if not self.option == 'edit':
+            self.password = make_password(self.password, some_salt)
         super().save(**kwargs)
         
     objects = UserManager()
