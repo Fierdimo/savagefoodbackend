@@ -51,7 +51,7 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'savage_food_app.urls'
-AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'api.user'
 
 TEMPLATES = [
     {
